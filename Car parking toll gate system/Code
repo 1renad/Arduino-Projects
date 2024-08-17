@@ -1,1 +1,46 @@
+#include <Servo.h>
+
+Servo servoMotor;
+
+int position = 0;
+int distanceCm = 0;
+
+long measureDistance(int trigPin, int echoPin) {
+  pinMode(trigPin, OUTPUT);
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  pinMode(echoPin, INPUT);
+  return pulseIn(echoPin, HIGH);
+}
+
+void setup() {
+  digitalWrite(12, LOW);
+  servoMotor.attach(9);
+  Serial.begin(9600);
+}
+
+void loop() {
+  distanceCm = 0.01723 * measureDistance(6, 7);
+
+  if (distanceCm < 30) {
+    Serial.print(distanceCm);
+    Serial.println(" cm");
+
+    for (position = 0; position <= 120; position++) {
+      servoMotor.write(position);
+      delay(15);
+    }
+
+    delay(500);
+
+    for (position = 120; position >= 0; position--) {
+      servoMotor.write(position);
+      delay(15);
+    }
+  }
+}
 
